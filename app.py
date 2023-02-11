@@ -14,25 +14,32 @@ def generate_excel_download_link(df):
     href = f'<a href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,{b64}" download="data_download.xlsx">Download Excel File</a>'
     return st.markdown(href, unsafe_allow_html=True)
 
-st.set_page_config(page_title='Subdivisão Planilhas')
+st.set_page_config(page_title='Subdivisão Planilhas',
+                    layout='wide')
 
-st.title("Subdivisão Planilhas 🗃️")
-st.subheader('Importe uma planilha no formato Excel')
+with st.sidebar:
+    st.image('https://www.onepointltd.com/wp-content/uploads/2020/03/inno2.png')
+    st.title('Separador de Planilhas Automático')
+    st.info('Esse projeto irá ajudar você a separar as bases de dados de forma mais eficiente e automática.')            
 
-uploaded_file = st.file_uploader('Escolha um arquivo do tipo XLSX', type='xlsx')
+st.markdown("### Subdivisão Planilhas 🗃️")
+st.markdown('#### Importe uma planilha')
+
+uploaded_file = st.file_uploader('Escolha um arquivo:', type='xlsx')
+st.warning('⚠️ O arquivo precisa ser no formato Excel (.xlsx)')
 
 if uploaded_file:
     st.markdown('---')
     df = pd.read_excel(uploaded_file, engine = 'openpyxl')
     st.dataframe(df)
-
+    st.success('✅ O arquivo foi carregado.')
     st.markdown('---')
 
     chunk_size = st.number_input("Tamanho de cada partição (linhas)", min_value=1, value=300)
     separate_button = st.button('Subdividir a planilha geral')
     
     if separate_button:
-        n = 300
+        n = chunk_size
         list_df = [df[i:i+n] for i in range(0, df.shape[0], n)]
         # Write each smaller DataFrame to a separate Excel file
         for i, df in enumerate(list_df):
