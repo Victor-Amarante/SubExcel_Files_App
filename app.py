@@ -5,13 +5,13 @@ import os
 import base64
 from io import StringIO, BytesIO
 
-def generate_excel_download_link(df):
+def generate_excel_download_link(df, i):
     # Credit Excel: https://discuss.streamlit.io/t/how-to-add-a-download-excel-csv-function-to-a-button/4474/5
     towrite = BytesIO()
     df.to_excel(towrite, encoding="utf-8", index=False, header=True)  # write to BytesIO buffer
     towrite.seek(0)  # reset pointer
     b64 = base64.b64encode(towrite.read()).decode()
-    href = f'<a href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,{b64}" download="data_download.xlsx">Download Excel File</a>'
+    href = f'<a href="data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,{b64}" download="planilha_{i+1}.xlsx">Download Excel File</a>'
     return st.markdown(href, unsafe_allow_html=True)
 
 st.set_page_config(page_title='Subdivisão Planilhas',
@@ -43,5 +43,5 @@ if uploaded_file:
         list_df = [df[i:i+n] for i in range(0, df.shape[0], n)]
         # Write each smaller DataFrame to a separate Excel file
         for i, df in enumerate(list_df):
-            st.write(f"Partição {i+1}:")
-            generate_excel_download_link(df)
+            st.write(f"Planilha {i+1}:")
+            generate_excel_download_link(df, i)
